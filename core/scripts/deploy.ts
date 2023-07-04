@@ -1,30 +1,37 @@
 import { ethers } from "hardhat";
+const utils = require("../common/utils");
 
 async function main() {
-  const verifyStr = "npx hardhat verify --network";
-
   const MagmaPoolDeployer = await ethers.getContractFactory(
     "MagmaPoolDeployer"
   );
   const magmaPoolDeployer = await MagmaPoolDeployer.deploy();
   console.log("MagmaPoolDeployer", magmaPoolDeployer.address);
-  console.log(
-    verifyStr,
-    process.env.HARDHAT_NETWORK,
-    magmaPoolDeployer.address
-  );
-
+  
   const MagmaFactory = await ethers.getContractFactory("MagmaFactory");
   const magmaFactory = await MagmaFactory.deploy(magmaPoolDeployer.address);
   console.log("MagmaFactory", magmaFactory.address);
+ 
+  let setFactoryAddressTx = await magmaPoolDeployer.setFactoryAddress(magmaFactory.address);
   console.log(
-    verifyStr,
-    process.env.HARDHAT_NETWORK,
-    magmaFactory.address,
-    magmaPoolDeployer.address
+    "magmaPoolDeployer setFactoryAddress tx:",
+    setFactoryAddressTx.hash
   );
 
-  await magmaPoolDeployer.setFactoryAddress(magmaFactory.address);
+  const OutputCodeHash = await ethers.getContractFactory("OutputCodeHash");
+  const outputCodeHash = await OutputCodeHash.deploy();
+  console.log("OutputCodeHash", outputCodeHash.address);
+
+  const hash = await outputCodeHash.getInitCodeHash();
+  console.log("hash: ", hash);
+
+  let contractAddresses = {
+    MagmaPoolDeployer: magmaPoolDeployer.address,
+    MagmaFactory: magmaFactory.address,
+    InitCodeHashAddress: outputCodeHash.address,
+    InitCodeHash: hash,
+  };
+  await utils.writeContractAddresses(contractAddresses);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
