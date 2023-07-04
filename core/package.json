@@ -1,0 +1,34 @@
+{
+  "name": "@magmaswap/core",
+  "version": "1.0.1",
+  "description": "Core smart contracts of Magma Protocol",
+  "license": "GPL-2.0-or-later",
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "magmaswap",
+    "core"
+  ],
+  "files": [
+    "contracts/interfaces",
+    "contracts/libraries",
+    "artifacts/contracts/MagmaFactory.sol/MagmaFactory.json",
+    "artifacts/contracts/MagmaPool.sol/MagmaPool.json",
+    "artifacts/contracts/interfaces/**/*.json",
+    "!artifacts/contracts/interfaces/**/*.dbg.json"
+  ],
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "deploy_mantle_testnet": "hardhat run --network mantleTestnet scripts/deploy.ts"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^2.0.2",
+    "hardhat": "^2.14.0",
+    "dotenv": "^16.0.3",
+    "hardhat-contract-sizer": "^2.6.1",
+    "hardhat-gas-reporter": "^1.0.9"
+  }
+}
