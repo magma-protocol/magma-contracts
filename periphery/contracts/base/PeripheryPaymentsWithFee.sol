@@ -7,14 +7,14 @@ import '@magmaswap/core/contracts/libraries/LowGasSafeMath.sol';
 import './PeripheryPayments.sol';
 import '../interfaces/IPeripheryPaymentsWithFee.sol';
 
-import '../interfaces/external/IWBIT.sol';
+import '../interfaces/external/IWMNT.sol';
 import '../libraries/TransferHelper.sol';
 
 abstract contract PeripheryPaymentsWithFee is PeripheryPayments, IPeripheryPaymentsWithFee {
     using LowGasSafeMath for uint256;
 
     /// @inheritdoc IPeripheryPaymentsWithFee
-    function unwrapWBITWithFee(
+    function unwrapWMNTWithFee(
         uint256 amountMinimum,
         address recipient,
         uint256 feeBips,
@@ -22,14 +22,14 @@ abstract contract PeripheryPaymentsWithFee is PeripheryPayments, IPeripheryPayme
     ) public payable override {
         require(feeBips > 0 && feeBips <= 100);
 
-        uint256 balanceWBIT = IWBIT(WBIT).balanceOf(address(this));
-        require(balanceWBIT >= amountMinimum, 'Insufficient WBIT');
+        uint256 balanceWMNT = IWMNT(WMNT).balanceOf(address(this));
+        require(balanceWMNT >= amountMinimum, 'Insufficient WMNT');
 
-        if (balanceWBIT > 0) {
-            IWBIT(WBIT).withdraw(balanceWBIT);
-            uint256 feeAmount = balanceWBIT.mul(feeBips) / 10_000;
-            if (feeAmount > 0) TransferHelper.safeTransferBIT(feeRecipient, feeAmount);
-            TransferHelper.safeTransferBIT(recipient, balanceWBIT - feeAmount);
+        if (balanceWMNT > 0) {
+            IWMNT(WMNT).withdraw(balanceWMNT);
+            uint256 feeAmount = balanceWMNT.mul(feeBips) / 10_000;
+            if (feeAmount > 0) TransferHelper.safeTransferMNT(feeRecipient, feeAmount);
+            TransferHelper.safeTransferMNT(recipient, balanceWMNT - feeAmount);
         }
     }
 

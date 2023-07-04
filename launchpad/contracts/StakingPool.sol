@@ -3,14 +3,14 @@ pragma solidity ^0.7.6;
 pragma abicoder v2;
 
 import "./interfaces/IStakingPool.sol";
-import "./interfaces/IWBIT.sol";
+import "./interfaces/IWMNT.sol";
 import "./interfaces/IScoreCalculator.sol";
 import "./libraries/TransferHelper.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 contract StakingPool is IStakingPool, Ownable {
-    address public override WBIT;
+    address public override WMNT;
     address public override scoreCalculator;
     uint256 public override lockPeriod;
     mapping(address => bool) public override isStakingToken;
@@ -23,12 +23,12 @@ contract StakingPool is IStakingPool, Ownable {
     receive() external payable {}
 
     constructor(
-        address WBIT_,
+        address WMNT_,
         address scoreCalculator_, 
         uint256 lockPeriod_,
         uint256[] memory tierScores_
     ) {
-        WBIT = WBIT_;
+        WMNT = WMNT_;
         scoreCalculator = scoreCalculator_;
         lockPeriod = lockPeriod_;
         tierScores = tierScores_;
@@ -55,7 +55,7 @@ contract StakingPool is IStakingPool, Ownable {
         return stakeInfos[stakeId];
     }
     
-    // add WBIT means support native token BIT
+    // add WMNT means support native token MNT
     function addStakingToken(address token) external override onlyOwner {
         require(token != address(0), "zero address");
         require(!isStakingToken[token], "already added");
@@ -115,8 +115,8 @@ contract StakingPool is IStakingPool, Ownable {
 
     function stakeNativeToken() external payable override returns (uint256 stakeId) {
         uint256 amount = msg.value;
-        IWBIT(WBIT).deposit{value: amount}();
-        return _stake(WBIT, amount, false);
+        IWMNT(WMNT).deposit{value: amount}();
+        return _stake(WMNT, amount, false);
     }
 
     function unstake(uint256[] calldata stakeIds) external override   {
@@ -141,9 +141,9 @@ contract StakingPool is IStakingPool, Ownable {
             if (stakeInfo.isERC721) {
                 IERC721(stakeInfo.token).safeTransferFrom(address(this), msg.sender, stakeInfo.tokenIdOrAmount);
             } else {
-                if (stakeInfo.token == WBIT) {
-                    IWBIT(WBIT).withdraw(stakeInfo.tokenIdOrAmount);
-                    TransferHelper.safeTransferBIT(msg.sender, stakeInfo.tokenIdOrAmount);
+                if (stakeInfo.token == WMNT) {
+                    IWMNT(WMNT).withdraw(stakeInfo.tokenIdOrAmount);
+                    TransferHelper.safeTransferMNT(msg.sender, stakeInfo.tokenIdOrAmount);
                 } else {
                     TransferHelper.safeTransfer(stakeInfo.token, msg.sender, stakeInfo.tokenIdOrAmount);
                 }

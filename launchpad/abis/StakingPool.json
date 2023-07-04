@@ -3,7 +3,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "WBIT_",
+        "name": "WMNT_",
         "type": "address"
       },
       {
@@ -221,7 +221,7 @@
   },
   {
     "inputs": [],
-    "name": "WBIT",
+    "name": "WMNT",
     "outputs": [
       {
         "internalType": "address",

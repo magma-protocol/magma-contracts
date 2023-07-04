@@ -10,9 +10,9 @@ contract MockTimeNonfungiblePositionManager is NonfungiblePositionManager {
     constructor(
         address _deployer,
         address _factory,
-        address _WBIT,
+        address _WMNT,
         address _tokenDescriptor
-    ) NonfungiblePositionManager(_deployer, _factory, _WBIT, _tokenDescriptor) {}
+    ) NonfungiblePositionManager(_deployer, _factory, _WMNT, _tokenDescriptor) {}
 
     function _blockTimestamp() internal view override returns (uint256) {
         return time;

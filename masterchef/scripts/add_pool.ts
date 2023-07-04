@@ -1,11 +1,13 @@
 import { ethers } from "hardhat";
+const utils = require("../common/utils");
 
-const LpAddress = "0xd27d7eb5eabfdf563c69d7973cc42a12b270702b";
-const masterChefAddress = "0xFF79ddBB87ae69bA8Bd09579081719d06EbAa58B";
+const LpAddress = "0x55F64f0EAbC15E957219b5513D2d8C823EbB7F37";
 
 async function main() {
+  let contractAddresses = utils.getContractAddresses();
+
   const MasterChef = await ethers.getContractFactory("MasterChef");
-  const masterChef = await MasterChef.attach(masterChefAddress);
+  const masterChef = await MasterChef.attach(contractAddresses.MasterChef);
 
   let owner = await  masterChef.owner();
   console.log("master chef owner:",owner);

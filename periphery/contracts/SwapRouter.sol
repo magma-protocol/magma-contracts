@@ -15,7 +15,7 @@ import './base/SelfPermit.sol';
 import './libraries/Path.sol';
 import './libraries/PoolAddress.sol';
 import './libraries/CallbackValidation.sol';
-import './interfaces/external/IWBIT.sol';
+import './interfaces/external/IWMNT.sol';
 
 /// @title Magma Swap Router
 /// @notice Router for stateless execution of swaps against Magma
@@ -37,7 +37,7 @@ contract SwapRouter is
     /// @dev Transient storage variable used for returning the computed amount in for an exact output swap.
     uint256 private amountInCached = DEFAULT_AMOUNT_IN_CACHED;
 
-    constructor(address _deployer, address _factory, address _WBIT) PeripheryImmutableState(_deployer, _factory, _WBIT) {}
+    constructor(address _deployer, address _factory, address _WMNT) PeripheryImmutableState(_deployer, _factory, _WMNT) {}
 
     /// @dev Returns the pool for the given token pair and fee. The pool contract may or may not exist.
     function getPool(

@@ -27,7 +27,7 @@ contract QuoterV2 is IQuoterV2, IMagmaSwapCallback, PeripheryImmutableState {
     /// @dev Transient storage variable used to check a safety condition in exact output swaps.
     uint256 private amountOutCached;
 
-    constructor(address _deployer, address _factory, address _WBIT) PeripheryImmutableState(_deployer, _factory, _WBIT) {}
+    constructor(address _deployer, address _factory, address _WMNT) PeripheryImmutableState(_deployer, _factory, _WMNT) {}
 
     function getPool(
         address tokenA,

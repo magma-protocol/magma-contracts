@@ -12,7 +12,7 @@ import "./interfaces/IMagmaPool.sol";
 import "./interfaces/ILMPool.sol";
 import "./interfaces/ILMPoolDeployer.sol";
 import "./interfaces/IFarmBooster.sol";
-import "./interfaces/IWBIT.sol";
+import "./interfaces/IWMNT.sol";
 import "./utils/Multicall.sol";
 import "./Enumerable.sol";
 
@@ -63,8 +63,8 @@ contract MasterChef is INonfungiblePositionManagerStruct, Multicall, Ownable, Re
     /// @notice Address of MAMA contract.
     IERC20 public immutable MAMA;
 
-    /// @notice Address of WBIT contract.
-    address public immutable WBIT;
+    /// @notice Address of WMNT contract.
+    address public immutable WMNT;
 
     /// @notice Address of Receiver contract.
     address public receiver;
@@ -186,10 +186,10 @@ contract MasterChef is INonfungiblePositionManagerStruct, Multicall, Ownable, Re
 
     /// @param _MAMA The MAMA token contract address.
     /// @param _nonfungiblePositionManager the NFT position manager contract address.
-    constructor(IERC20 _MAMA, INonfungiblePositionManager _nonfungiblePositionManager, address _WBIT) {
+    constructor(IERC20 _MAMA, INonfungiblePositionManager _nonfungiblePositionManager, address _WMNT) {
         MAMA = _MAMA;
         nonfungiblePositionManager = _nonfungiblePositionManager;
-        WBIT = _WBIT;
+        WMNT = _WMNT;
     }
 
     /// @notice Returns the mama per second , period end time.
@@ -531,7 +531,7 @@ contract MasterChef is INonfungiblePositionManagerStruct, Multicall, Ownable, Re
         PoolInfo memory pool = poolInfo[positionInfo.pid];
         pay(pool.token0, params.amount0Desired);
         pay(pool.token1, params.amount1Desired);
-        if (pool.token0 != WBIT && pool.token1 != WBIT && msg.value > 0) revert();
+        if (pool.token0 != WMNT && pool.token1 != WMNT && msg.value > 0) revert();
         (liquidity, amount0, amount1) = nonfungiblePositionManager.increaseLiquidity{value: msg.value}(params);
         uint256 token0Left = params.amount0Desired - amount0;
         uint256 token1Left = params.amount1Desired - amount1;
@@ -549,7 +549,7 @@ contract MasterChef is INonfungiblePositionManagerStruct, Multicall, Ownable, Re
     /// @param _token The token to pay
     /// @param _amount The amount to pay
     function pay(address _token, uint256 _amount) internal {
-        if (_token == WBIT && msg.value > 0) {
+        if (_token == WMNT && msg.value > 0) {
             if (msg.value != _amount) revert InconsistentAmount();
         } else {
             IERC20(_token).safeTransferFrom(msg.sender, address(this), _amount);
@@ -560,9 +560,9 @@ contract MasterChef is INonfungiblePositionManagerStruct, Multicall, Ownable, Re
     /// @param _token The token to refund
     /// @param _amount The amount to refund
     function refund(address _token, uint256 _amount) internal {
-        if (_token == WBIT && msg.value > 0) {
-            nonfungiblePositionManager.refundBIT();
-            safeTransferBIT(msg.sender, address(this).balance);
+        if (_token == WMNT && msg.value > 0) {
+            nonfungiblePositionManager.refundMNT();
+            safeTransferMNT(msg.sender, address(this).balance);
         } else {
             IERC20(_token).safeTransfer(msg.sender, _amount);
         }
@@ -589,7 +589,7 @@ contract MasterChef is INonfungiblePositionManagerStruct, Multicall, Ownable, Re
     /// @notice Collects up to a maximum amount of fees owed to a specific position to the recipient
     /// @param params tokenId The ID of the NFT for which tokens are being collected,
     /// recipient The account that should receive the tokens,
-    /// @dev Warning!!! Please make sure to use multicall to call unwrapWBIT or sweepToken when set recipient address(0), or you will lose your funds.
+    /// @dev Warning!!! Please make sure to use multicall to call unwrapWMNT or sweepToken when set recipient address(0), or you will lose your funds.
     /// amount0Max The maximum amount of token0 to collect,
     /// amount1Max The maximum amount of token1 to collect
     /// @return amount0 The amount of fees collected in token0
@@ -642,26 +642,26 @@ contract MasterChef is INonfungiblePositionManagerStruct, Multicall, Ownable, Re
             }
         }
         if (balance > 0) {
-            if (_token == WBIT) {
-                IWBIT(WBIT).withdraw(balance);
-                safeTransferBIT(_to, balance);
+            if (_token == WMNT) {
+                IWMNT(WMNT).withdraw(balance);
+                safeTransferMNT(_to, balance);
             } else {
                 IERC20(_token).safeTransfer(_to, balance);
             }
         }
     }
 
-    /// @notice Unwraps the contract's WBIT balance and sends it to recipient as BIT.
-    /// @dev The amountMinimum parameter prevents malicious contracts from stealing WBIT from users.
-    /// @param amountMinimum The minimum amount of WBIT to unwrap
-    /// @param recipient The address receiving BIT
-    function unwrapWBIT(uint256 amountMinimum, address recipient) external nonReentrant {
-        uint256 balanceWBIT = IWBIT(WBIT).balanceOf(address(this));
-        if (balanceWBIT < amountMinimum) revert InsufficientAmount();
+    /// @notice Unwraps the contract's WMNT balance and sends it to recipient as MNT.
+    /// @dev The amountMinimum parameter prevents malicious contracts from stealing WMNT from users.
+    /// @param amountMinimum The minimum amount of WMNT to unwrap
+    /// @param recipient The address receiving MNT
+    function unwrapWMNT(uint256 amountMinimum, address recipient) external nonReentrant {
+        uint256 balanceWMNT = IWMNT(WMNT).balanceOf(address(this));
+        if (balanceWMNT < amountMinimum) revert InsufficientAmount();
 
-        if (balanceWBIT > 0) {
-            IWBIT(WBIT).withdraw(balanceWBIT);
-            safeTransferBIT(recipient, balanceWBIT);
+        if (balanceWMNT > 0) {
+            IWMNT(WMNT).withdraw(balanceWMNT);
+            safeTransferMNT(recipient, balanceWMNT);
         }
     }
 
@@ -797,11 +797,11 @@ contract MasterChef is INonfungiblePositionManagerStruct, Multicall, Ownable, Re
     }
 
     /**
-     * @notice Transfer BIT in a safe way
-     * @param to: address to transfer BIT to
-     * @param value: BIT amount to transfer (in wei)
+     * @notice Transfer MNT in a safe way
+     * @param to: address to transfer MNT to
+     * @param value: MNT amount to transfer (in wei)
      */
-    function safeTransferBIT(address to, uint256 value) internal {
+    function safeTransferMNT(address to, uint256 value) internal {
         (bool success, ) = to.call{value: value}("");
         if (!success) revert();
     }
@@ -828,6 +828,6 @@ contract MasterChef is INonfungiblePositionManagerStruct, Multicall, Ownable, Re
     }
 
     receive() external payable {
-        if (msg.sender != address(nonfungiblePositionManager) && msg.sender != WBIT) revert();
+        if (msg.sender != address(nonfungiblePositionManager) && msg.sender != WMNT) revert();
     }
 }

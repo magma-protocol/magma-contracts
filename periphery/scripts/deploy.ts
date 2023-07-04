@@ -1,20 +1,24 @@
 import { ethers } from "hardhat";
+const utils = require("../common/utils");
 
 async function main() {
-  const magmaPoolDeployer = "0x2014B354e8D3E5F49519a414b250Eda65e618e1c";
-  const magmaFactory = "0x5A296481Eb35FC57a471afD448213C77e9d779A1";
-  const WBIT = "0x8734110e5e1dcf439c7f549db740e546fea82d66";
+  const magmaPoolDeployer = "0x13A16A5023387786a7c3b308AF17Eb4a5319Fad7";
+  const magmaFactory = "0xd3A4204862955d1F422f533Eb581310DBaAfaf7e";
+
+  const WMNT = await ethers.getContractFactory("WMNT");
+  const wmnt = await WMNT.deploy();
+  console.log("WMNT address:", wmnt.address);
 
   const SwapRouter = await ethers.getContractFactory("SwapRouter");
   const swapRouter = await SwapRouter.deploy(
     magmaPoolDeployer,
     magmaFactory,
-    WBIT
+    wmnt.address
   );
   console.log("SwapRouter", swapRouter.address);
 
   const QuoterV2 = await ethers.getContractFactory("QuoterV2");
-  const quoterV2 = await QuoterV2.deploy(magmaPoolDeployer, magmaFactory, WBIT);
+  const quoterV2 = await QuoterV2.deploy(magmaPoolDeployer, magmaFactory, wmnt.address);
   console.log("QuoterV2", quoterV2.address);
 
   const TickLens = await ethers.getContractFactory("TickLens");
@@ -31,8 +35,8 @@ async function main() {
   );
   const nonfungibleTokenPositionDescriptor =
     await NonfungibleTokenPositionDescriptor.deploy(
-      WBIT,
-      asciiStringToBytes32("BIT")
+      wmnt.address,
+      utils.asciiStringToBytes32("MNT")
     );
   console.log(
     "NonfungibleTokenPositionDescriptor",
@@ -45,7 +49,7 @@ async function main() {
   const nonfungiblePositionManager = await NonfungiblePositionManager.deploy(
     magmaPoolDeployer,
     magmaFactory,
-    WBIT,
+    wmnt.address,
     nonfungibleTokenPositionDescriptor.address
   );
   console.log("NonfungiblePositionManager", nonfungiblePositionManager.address);
@@ -55,6 +59,19 @@ async function main() {
   );
   const magmaInterfaceMulticall = await MagmaInterfaceMulticall.deploy();
   console.log("MagmaInterfaceMulticall", magmaInterfaceMulticall.address);
+
+
+  let contractAddresses = {
+    WMNT: wmnt.address,
+    SwapRouter: swapRouter.address,
+    QuoterV2: quoterV2.address,
+    TickLens: tickLens.address,
+    NFTDescriptor: nftDescriptor.address,
+    NonfungibleTokenPositionDescriptor: nonfungibleTokenPositionDescriptor.address,
+    NonfungiblePositionManager: nonfungiblePositionManager.address,
+    MagmaInterfaceMulticall: magmaInterfaceMulticall.address,
+  };
+  await utils.writeContractAddresses(contractAddresses);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
@@ -63,15 +80,3 @@ main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });
-
-function isAscii(str: string): boolean {
-  return /^[\x00-\x7F]*$/.test(str);
-}
-
-function asciiStringToBytes32(str: string): string {
-  if (str.length > 32 || !isAscii(str)) {
-    throw new Error("Invalid label, must be less than 32 characters");
-  }
-
-  return "0x" + Buffer.from(str, "ascii").toString("hex").padEnd(64, "0");
-}

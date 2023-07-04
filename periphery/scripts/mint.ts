@@ -1,64 +1,48 @@
 import { ethers } from "hardhat";
 import { BigNumber, BigNumberish } from "@ethersproject/bignumber";
+const utils = require("../common/utils");
+
+const wmntAddress = "0xEa12Be2389c2254bAaD383c6eD1fa1e15202b52A";
+const usdcAddress = "0x82A2eb46a64e4908bBC403854bc8AA699bF058E9";
 
 async function main() {
   const [owner] = await ethers.getSigners();
+  let contractAddresses = utils.getContractAddresses();
+  console.log("contractAddresses:", contractAddresses);
 
-  const positionManagerAddress = "0x632F8C240Da3d3b96b15BaCF3E120FCdD105a1fF";
+  const MNT = await ethers.getContractAt("WMNT", wmntAddress);
+  let mammApproveTx = await MNT.approve(
+    contractAddresses.NonfungiblePositionManager,
+    BigNumber.from("10000000000000000000000000000")
+  );
+  console.log("MNT approve tx:", mammApproveTx.hash);
+
+  const USDC = await ethers.getContractAt("SelfSufficientERC20", usdcAddress);
+  let usdcApproveTx = await USDC.approve(
+    contractAddresses.NonfungiblePositionManager,
+    BigNumber.from("10000000000000000000000000000")
+  );
+  console.log("usdc approve tx:", usdcApproveTx.hash);
+
   const positionManager = await ethers.getContractAt(
     "NonfungiblePositionManager",
-    positionManagerAddress
+    contractAddresses.NonfungiblePositionManager
   );
 
-  //   await positionManager.createAndInitializePoolIfNecessary(
-  //     "0x74a0E7118480bdfF5f812c7a879a41db09ac2c39",
-  //     "0x82A2eb46a64e4908bBC403854bc8AA699bF058E9",
-  //     10000,
-  //     BigNumber.from("79228162500000000")
-  //   );
-  //   console.log("create pool success");
-
-  const MAMA = await ethers.getContractAt(
-    "SelfSufficientERC20",
-    "0x74a0E7118480bdfF5f812c7a879a41db09ac2c39"
-  );
-  const USDC = await ethers.getContractAt(
-    "SelfSufficientERC20",
-    "0x82A2eb46a64e4908bBC403854bc8AA699bF058E9"
-  );
-  await MAMA.approve(
-    positionManagerAddress,
-    BigNumber.from("10000000000000000000000000000")
-  );
-  await USDC.approve(
-    positionManagerAddress,
-    BigNumber.from("10000000000000000000000000000")
-  );
-  console.log("approve success");
-
-  const tickMath = await ethers.getContractAt(
-    "ExternalTickMath",
-    "0x03C295ff7f1Fe1085e9ceA827d5d7b7f8cA7c684"
-  );
-  const tick = await tickMath.getTickAtSqrtRatio(
-    BigNumber.from("79228162500000000")
-  );
-  console.log("get tick success");
-
-  await positionManager.mint({
-    token0: "0x74a0E7118480bdfF5f812c7a879a41db09ac2c39",
-    token1: "0x82A2eb46a64e4908bBC403854bc8AA699bF058E9",
+  let mintTx = await positionManager.mint({
+    token0: wmntAddress,
+    token1: usdcAddress,
     fee: 500,
-    tickLower: -275281,
-    tickUpper: -275261,
-    amount0Desired: BigNumber.from("20000019471182331350603"),
-    amount1Desired: BigNumber.from("200000000"),
-    amount0Min: 0,
-    amount1Min: 0,
-    recipient: "0x1956b2c4C511FDDd9443f50b36C4597D10cD9985",
+    tickLower: -100,
+    tickUpper: 100,
+    amount0Desired: "100000000000000000",
+    amount1Desired: "1000000",
+    amount0Min: ethers.constants.Zero,
+    amount1Min: ethers.constants.Zero,
+    recipient: owner.address,
     deadline: 9999999999,
   });
-  console.log("mint success");
+  console.log("mint success:", mintTx.hash);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

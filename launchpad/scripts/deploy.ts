@@ -5,7 +5,7 @@ async function main() {
   let contractAddresses = utils.getContractAddresses();
 
   const potisionManager = "0x521c76bF1F44f85eF5dbC17d5B70B7Be48Dd2f05";
-  const WBIT = "0x8734110e5e1dcf439c7f549db740e546fea82d66";
+  const WMNT = "0xEa12Be2389c2254bAaD383c6eD1fa1e15202b52A";
   let scoreCalculatorAddress = "";
 
 
@@ -55,7 +55,7 @@ async function main() {
   const tierScores = [50, 200, 500, 1000, 5000, 10000];
   const StakingPool = await ethers.getContractFactory("StakingPool");
   const stakingPool = await StakingPool.deploy(
-    WBIT,
+    WMNT,
     scoreCalculatorAddress,
     lockPeriod,
     tierScores

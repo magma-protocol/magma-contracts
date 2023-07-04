@@ -1,5 +1,5 @@
 import { ethers } from "hardhat";
-const web3 = require("web3");
+const utils = require("../common/utils");
 
 const receiver = "0x75F57C3a822cc37dd2453cAC3469a21361456BFb";
 

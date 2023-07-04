@@ -11,11 +11,11 @@ abstract contract PeripheryImmutableState is IPeripheryImmutableState {
     /// @inheritdoc IPeripheryImmutableState
     address public immutable override factory;
     /// @inheritdoc IPeripheryImmutableState
-    address public immutable override WBIT;
+    address public immutable override WMNT;
 
-    constructor(address _deployer, address _factory, address _WBIT) {
+    constructor(address _deployer, address _factory, address _WMNT) {
         deployer = _deployer;
         factory = _factory;
-        WBIT = _WBIT;
+        WMNT = _WMNT;
     }
 }

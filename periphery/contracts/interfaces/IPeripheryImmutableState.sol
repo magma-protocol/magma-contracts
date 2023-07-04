@@ -10,6 +10,6 @@ interface IPeripheryImmutableState {
     /// @return Returns the address of the Magma factory
     function factory() external view returns (address);
 
-    /// @return Returns the address of WBIT
-    function WBIT() external view returns (address);
+    /// @return Returns the address of WMNT
+    function WMNT() external view returns (address);
 }

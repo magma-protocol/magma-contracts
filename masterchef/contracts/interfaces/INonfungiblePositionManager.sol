@@ -79,5 +79,5 @@ interface INonfungiblePositionManager is INonfungiblePositionManagerStruct, IERC
     /// @param tokenId The ID of the token that is being burned
     function burn(uint256 tokenId) external payable;
 
-    function refundBIT() external payable;
+    function refundMNT() external payable;
 }

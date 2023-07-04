@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.10;
+// SPDX-License-Identifier: GPL-2.0-or-later
+pragma solidity =0.7.6;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 
-/// @title Interface for WBIT
-interface IWBIT is IERC20 {
+/// @title Interface for WMNT
+interface IWMNT is IERC20 {
     /// @notice Deposit ether to get wrapped ether
     function deposit() external payable;
 

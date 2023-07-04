@@ -22,12 +22,12 @@ contract NonfungibleTokenPositionDescriptor is INonfungibleTokenPositionDescript
     address private constant TBTC = 0x8dAEBADE922dF735c38C80C7eBD708Af50815fAa;
     address private constant WBTC = 0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599;
 
-    address public immutable WBIT;
+    address public immutable WMNT;
     /// @dev A null-terminated string
     bytes32 public immutable nativeCurrencyLabelBytes;
 
-    constructor(address _WBIT, bytes32 _nativeCurrencyLabelBytes) {
-        WBIT = _WBIT;
+    constructor(address _WMNT, bytes32 _nativeCurrencyLabelBytes) {
+        WMNT = _WMNT;
         nativeCurrencyLabelBytes = _nativeCurrencyLabelBytes;
     }
 
@@ -73,10 +73,10 @@ contract NonfungibleTokenPositionDescriptor is INonfungibleTokenPositionDescript
                     tokenId: tokenId,
                     quoteTokenAddress: quoteTokenAddress,
                     baseTokenAddress: baseTokenAddress,
-                    quoteTokenSymbol: quoteTokenAddress == WBIT
+                    quoteTokenSymbol: quoteTokenAddress == WMNT
                         ? nativeCurrencyLabel()
                         : SafeERC20Namer.tokenSymbol(quoteTokenAddress),
-                    baseTokenSymbol: baseTokenAddress == WBIT
+                    baseTokenSymbol: baseTokenAddress == WMNT
                         ? nativeCurrencyLabel()
                         : SafeERC20Namer.tokenSymbol(baseTokenAddress),
                     quoteTokenDecimals: IERC20Metadata(quoteTokenAddress).decimals(),
@@ -101,7 +101,7 @@ contract NonfungibleTokenPositionDescriptor is INonfungibleTokenPositionDescript
     }
 
     function tokenRatioPriority(address token, uint256 chainId) public view returns (int256) {
-        if (token == WBIT) {
+        if (token == WMNT) {
             return TokenRatioSortOrder.DENOMINATOR;
         }
         if (chainId == 1) {

@@ -38,7 +38,17 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     // apiKey: process.env.MANTLE_API_KEY,
-    apiKey: process.env.BSCSCAN_API_KEY,
+    apiKey: process.env.MANTLESCAN_API_KEY,
+    customChains: [
+      {
+        network: "mantleTestnet",
+        chainId: 5001,
+        urls: {
+          apiURL: "https://explorer.testnet.mantle.xyz/api",
+          browserURL: "https://rpc.testnet.mantle.xyz",
+        },
+      },
+    ],
   },
 };
 

@@ -23,7 +23,10 @@
     "node": ">=10"
   },
   "scripts": {
-    "deploy_mantle_testnet": "hardhat run --network mantleTestnet scripts/deploy.ts"
+    "deploy": "hardhat run --network mantleTestnet scripts/deploy.ts",
+    "init_pool": "hardhat run --network mantleTestnet scripts/init_pool.ts",
+    "mint": "hardhat run --network mantleTestnet scripts/mint.ts",
+    "verify": "hardhat run --network mantleTestnet scripts/verify.ts"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^2.0.2",

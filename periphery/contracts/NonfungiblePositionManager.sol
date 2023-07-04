@@ -71,9 +71,9 @@ contract NonfungiblePositionManager is
     constructor(
         address _deployer,
         address _factory,
-        address _WBIT,
+        address _WMNT,
         address _tokenDescriptor_
-    ) ERC721Permit('Magma Positions NFT-V1', 'MAG-V3-POS', '1') PeripheryImmutableState(_deployer, _factory, _WBIT) {
+    ) ERC721Permit('Magma Positions NFT-V1', 'MAG-V3-POS', '1') PeripheryImmutableState(_deployer, _factory, _WMNT) {
         _tokenDescriptor = _tokenDescriptor_;
     }
 

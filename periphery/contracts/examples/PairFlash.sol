@@ -24,8 +24,8 @@ contract PairFlash is IMagmaFlashCallback, PeripheryPayments {
         ISwapRouter _swapRouter,
         address _deployer,
         address _factory,
-        address _WBIT
-    ) PeripheryImmutableState(_deployer, _factory, _WBIT) {
+        address _WMNT
+    ) PeripheryImmutableState(_deployer, _factory, _WMNT) {
         swapRouter = _swapRouter;
     }
 

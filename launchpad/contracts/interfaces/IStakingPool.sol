@@ -29,7 +29,7 @@ interface IStakingPool {
     );
     event Unstaked(address indexed user, uint256 stakeId,uint256 tokenIdOrAmount, uint256 score, uint256 tier);
 
-    function WBIT() external view returns (address);
+    function WMNT() external view returns (address);
     function scoreCalculator() external view returns (address);
     function lockPeriod() external view returns (uint256);
     function isStakingToken(address token) external view returns (bool);
