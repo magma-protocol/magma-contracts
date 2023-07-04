@@ -1,10 +1,9 @@
 import { ethers } from "hardhat";
 const utils = require("../common/utils");
 
-
 const mamaAddress = "0x74a0E7118480bdfF5f812c7a879a41db09ac2c39";
-const wMNT = "0x8734110e5e1dcf439c7f549db740e546fea82d66";
-const positionManagerAddress = "0x02dB6ab281dA6436D4A449a4b15d148a51ADC0f6";
+const wMNT = "0xEa12Be2389c2254bAaD383c6eD1fa1e15202b52A";
+const positionManagerAddress = "0x63E6d23173d05d26Ce0803423a45EBE0442b63f7";
 
 async function main() {
   // deploy masterChef

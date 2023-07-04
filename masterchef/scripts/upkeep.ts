@@ -1,11 +1,13 @@
 import { ethers } from "hardhat";
 const utils = require("../common/utils");
 
-const receiver = "0x75F57C3a822cc37dd2453cAC3469a21361456BFb";
-
 async function main() {
+  let contractAddresses = utils.getContractAddresses();
+
   const MasterChefV3Receiver = await ethers.getContractFactory("MasterChefV3Receiver");
-  const masterChefRecevier = await MasterChefV3Receiver.attach(receiver);
+  const masterChefRecevier = await MasterChefV3Receiver.attach(
+    contractAddresses.MasterChefV3Receiver
+  );
 
   let upkeepTx = await masterChefRecevier.upkeep(
     "100000000000000000000000",

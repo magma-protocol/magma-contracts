@@ -1,10 +1,9 @@
 import { ethers } from "hardhat";
 import { abi } from "@magmaswap/core/artifacts/contracts/MagmaFactory.sol/MagmaFactory.json";
+const utils = require("../common/utils");
 
-const masterChefAddress = "0xd9bf825c35F383506203537696C3597cB8306c55";
-const magmaFactoryAddress = "0x651570c879ca1C09AAfF7e10c17F79c17709390C";
-
-const magmaLmPoolDeloyerAddress = "0xCaBb72b55CdadcEbaA7fa78cE97730824CD9561B";
+const masterChefAddress = "0xcBbD76a2F2926e161015b21596df37123c7f850C";
+const magmaFactoryAddress = "0xd3A4204862955d1F422f533Eb581310DBaAfaf7e";
 
 async function main() {
   const MagmaLmPoolDeployer = await ethers.getContractFactory(
@@ -15,9 +14,14 @@ async function main() {
   );
   console.log("MagmaLmPoolDeployer", magmaLmPoolDeployer.address);
 
+  let contractAddresses = {
+    MagmaLmPoolDeployer: magmaLmPoolDeployer.address,
+  };
+  await utils.writeContractAddresses(contractAddresses);
+
   const [owner] = await ethers.getSigners();
   const magmaFactory = new ethers.Contract(magmaFactoryAddress, abi, owner);
-  let tx = await magmaFactory.setLmPoolDeployer(magmaLmPoolDeloyerAddress);
+  let tx = await magmaFactory.setLmPoolDeployer(magmaLmPoolDeployer.address);
   console.log("SetLmPoolDeployer success, tx: ", tx.hash);
 }
 

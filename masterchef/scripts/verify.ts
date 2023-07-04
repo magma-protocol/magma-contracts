@@ -2,30 +2,23 @@ const hre = require("hardhat");
 const utils = require("../common/utils");
 
 const mamaAddress = "0x74a0E7118480bdfF5f812c7a879a41db09ac2c39";
-const positionManagerAddress = "0x521c76bF1F44f85eF5dbC17d5B70B7Be48Dd2f05";
-const wBit = "0x8734110e5e1dcf439c7f549db740e546fea82d66";
-const masterChefAddress = "0xFF79ddBB87ae69bA8Bd09579081719d06EbAa58B";
-const receiver = "0x75F57C3a822cc37dd2453cAC3469a21361456BFb";
+const wMNT = "0xEa12Be2389c2254bAaD383c6eD1fa1e15202b52A";
+const positionManagerAddress = "0x63E6d23173d05d26Ce0803423a45EBE0442b63f7";
 
 async function main() {
+  let contractAddresses = utils.getContractAddresses();
+
   await hre.run("verify:verify", {
-    address: masterChefAddress,
+    address: contractAddresses.MasterChef,
     contract: "contracts/MasterChef.sol:MasterChef",
-    constructorArguments: [
-      mamaAddress,
-      positionManagerAddress,
-      wBit
-    ],
+    constructorArguments: [mamaAddress, positionManagerAddress, wMNT],
   });
 
   await hre.run("verify:verify", {
-    address: receiver,
+    address: contractAddresses.MasterChefV3Receiver,
     contract:
       "contracts/receiver/MasterChefV3Receiver.sol:MasterChefV3Receiver",
-    constructorArguments: [
-      masterChefAddress,
-      mamaAddress
-    ],
+    constructorArguments: [contractAddresses.MasterChef, mamaAddress],
   });
 }
 

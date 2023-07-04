@@ -1,7 +1,7 @@
 import { ethers } from "hardhat";
 const utils = require("../common/utils");
 
-const LpAddress = "0x55F64f0EAbC15E957219b5513D2d8C823EbB7F37";
+const LpAddress = "0xAbb213151ee053180348d9423F7F8dAf24F46F02";
 
 async function main() {
   let contractAddresses = utils.getContractAddresses();
