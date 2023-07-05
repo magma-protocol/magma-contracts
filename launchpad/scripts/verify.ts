@@ -3,28 +3,33 @@ const utils = require("../common/utils");
 
 const mamaAddress = "0x74a0E7118480bdfF5f812c7a879a41db09ac2c39";
 const positionManagerAddress = "0x521c76bF1F44f85eF5dbC17d5B70B7Be48Dd2f05";
-const wBit = "0x8734110e5e1dcf439c7f549db740e546fea82d66";
+const WMNT = "0xEa12Be2389c2254bAaD383c6eD1fa1e15202b52A";
 const masterChefAddress = "0xFF79ddBB87ae69bA8Bd09579081719d06EbAa58B";
 
 async function main() {
     let contractAddresses = utils.getContractAddresses();
     console.log(contractAddresses);
 
-    const lockPeriod = 600;
-    const tierScores = [50, 200, 500, 1000, 5000, 10000];
-    await hre.run(
-      "verify:verify",
-      {
-        address: contractAddresses.StakingPool,
-        contract: "contracts/StakingPool.sol:StakingPool",
-        constructorArguments: [
-          wBit,
-          contractAddresses.ScoreCalculator.Proxy,
-          lockPeriod,
-          tierScores,
-        ],
-      }
-    );
+   const lockPeriod = 600;
+   const tierScores = [
+     50 * 1e8,
+     100 * 1e8,
+     500 * 1e8,
+     1000 * 1e8,
+     5000 * 1e8,
+     10000 * 1e8,
+   ];
+    await hre.run("verify:verify", {
+      address: contractAddresses.StakingPool,
+      contract: "contracts/StakingPool.sol:StakingPool",
+      constructorArguments: [
+        WMNT,
+        contractAddresses.ScoreCalculator.Proxy,
+        lockPeriod,
+        tierScores,
+      ],
+    });
+    return
 
     await hre.run("verify:verify", {
       address: contractAddresses.IdoPoolTemplate,

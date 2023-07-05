@@ -43,6 +43,10 @@ contract StakingPool is IStakingPool, Ownable {
     }
 
     function getTierByScore(uint256 score) public view override returns (uint256 tier) {
+        if (score == 0 || tierScores.length == 0){
+            return 0;
+        }
+
         for (uint256 i = tierScores.length - 1; i >= 0; i--) {
             if (score >= tierScores[i]) {
                 tier = i + 1;
@@ -84,19 +88,40 @@ contract StakingPool is IStakingPool, Ownable {
     }
 
     function setTierScore(uint256 tier, uint256 score) external override onlyOwner {
+        require(score > 0, "zero score");
+        require(tier > 0, "zero tier");
         uint256 tierIndex = tier - 1;
+
         uint256 tierSize = tierScores.length;
         require(tierIndex <= tierSize, "out of bounds");
-        require(score > 0, "zero score");
-        if (tierIndex == tierSize) { // add new tier score
-            require(score > tierScores[tierSize - 1], "must greater than last tier's score");
+
+       if (tierIndex == tierSize) { // add new tier score
+            require(score > tierScores[tierSize - 1], "must greater than last tier score");
             tierScores.push(score);
             emit TierScoreUpdated(tier, 0, score);
-        } else { // reset old tier score
-            require(score > tierScores[tierIndex - 1] && score < tierScores[tierIndex + 1], "score must between [tierIndex-1,tierIndex+1]'s score");
-            uint256 oldScore = tierScores[tierIndex];
-            tierScores[tierIndex] = score;
-            emit TierScoreUpdated(tier, oldScore, score);
+        } else if(tierIndex == tierSize -1){ // max tier update
+            if (tierSize == 1){ // only one tier
+                uint256 oldScore = tierScores[tierIndex];
+                tierScores[tierIndex] = score;
+                emit TierScoreUpdated(tier, oldScore, score);
+            }else{
+                uint256 oldScore = tierScores[tierIndex];
+                require(score > tierScores[tierIndex - 1],"new score must greater than pre tier score");
+                tierScores[tierIndex] = score;
+                emit TierScoreUpdated(tier, oldScore, score);
+            }
+        }else { // reset other old tier score
+            if (tierIndex == 0){ // first tier
+                uint256 oldScore = tierScores[tierIndex];
+                require(score < tierScores[tierIndex + 1],"new score must less than next tier score");
+                tierScores[tierIndex] = score;
+                emit TierScoreUpdated(tier, oldScore, score);
+            }else{
+                require(score > tierScores[tierIndex - 1] && score < tierScores[tierIndex + 1], "score must between [tierIndex-1,tierIndex+1] score");
+                uint256 oldScore = tierScores[tierIndex];
+                tierScores[tierIndex] = score;
+                emit TierScoreUpdated(tier, oldScore, score);
+            }
         }
     }
 

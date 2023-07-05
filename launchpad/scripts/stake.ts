@@ -74,11 +74,15 @@ async function main() {
   }
 
   //  do stake
-  let stakeTx = await stakingPool.stake(
-    mamaAddress,
-    BigNumber.from("1000000000000000000000")
-  );
-  console.log("stakeTx tx:", stakeTx.hash);
+  // let stakeTx = await stakingPool.stake(
+  //   mamaAddress,
+  //   BigNumber.from("1000000000000000000000")
+  // );
+  // console.log("stakeTx tx:", stakeTx.hash);
+
+  // do unstake
+  let unstakeTx = await stakingPool.unstake([0]);
+  console.log("unstakeTx tx:", unstakeTx.hash);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
