@@ -54,13 +54,6 @@ async function main() {
   );
   console.log("NonfungiblePositionManager", nonfungiblePositionManager.address);
 
-  const MagmaInterfaceMulticall = await ethers.getContractFactory(
-    "MagmaInterfaceMulticall"
-  );
-  const magmaInterfaceMulticall = await MagmaInterfaceMulticall.deploy();
-  console.log("MagmaInterfaceMulticall", magmaInterfaceMulticall.address);
-
-
   let contractAddresses = {
     WMNT: wmnt.address,
     SwapRouter: swapRouter.address,
@@ -69,7 +62,6 @@ async function main() {
     NFTDescriptor: nftDescriptor.address,
     NonfungibleTokenPositionDescriptor: nonfungibleTokenPositionDescriptor.address,
     NonfungiblePositionManager: nonfungiblePositionManager.address,
-    MagmaInterfaceMulticall: magmaInterfaceMulticall.address,
   };
   await utils.writeContractAddresses(contractAddresses);
 }
