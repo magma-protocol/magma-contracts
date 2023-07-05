@@ -45,6 +45,7 @@ interface IIdoPool {
     function insuranceFeeRate() external view returns (uint8); // Returns the insurance fee rate as a percentage.
     function tgeUnlockRatio() external view returns (uint8); // Returns the TGE unlock ratio as a percentage.
     function unlockTillTime() external view returns (uint256); // Returns the expiration time for locked tokens.
+    function minBuyQuota() external view returns (uint256); // Returns the minQuota to buy.
 
     function getPresaleQuota(address user) external view returns (uint256);
     function getPublicSaleQuota(address user) external view returns (uint256);

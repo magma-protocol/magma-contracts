@@ -37,10 +37,12 @@ contract IdoPool is IIdoPool, Initializable {
     uint256 public override publicSaleDepositEndTime;
     uint256 public override claimStartTime;
     uint256 public override unlockTillTime;
+    uint256 public override minBuyQuota;
 
     uint8 public override platformCommissionFeeRate; // platform commission fee rate as a percentage, 0-100
     uint8 public override insuranceFeeRate; // insurance fee rate as a percentage, 0-100
     uint8 public override tgeUnlockRatio; // the TGE unlock ratio as a percentage, 0-100
+
 
     mapping(address => uint256) public override getPresaleQuota; // presale allocation limit
     mapping(address => uint256) public override getPublicSaleQuota; // publicsale allocation limit
@@ -88,6 +90,7 @@ contract IdoPool is IIdoPool, Initializable {
 
         uint8 sellingTokenDecimals = IERC20(sellingToken_).decimals();
         _sellingTokenExp = uint256(10 ** sellingTokenDecimals);
+        minBuyQuota = uint256(10 ** sellingTokenDecimals);
     }
 
     // Since there are too many parameters needed for initialization, it is split into two functions to avoid "Stack too deep" error.
@@ -169,6 +172,7 @@ contract IdoPool is IIdoPool, Initializable {
 
     // Users start presale 
     function presaleDeposit(uint256 buyQuota, bool buyInsurance) external override {
+        require(buyQuota > minBuyQuota, "invalid buyQuota");
         require(block.timestamp >= presaleAndEnrollStartTime, "not start");
         require(block.timestamp <= presaleAndEnrollEndTime, "end");
         require(!presaleDeposited[msg.sender], "already presale deposited");
@@ -196,8 +200,9 @@ contract IdoPool is IIdoPool, Initializable {
         emit PresaleDeposited(msg.sender, buyQuota, buyInsurance);
     }
 
-     // Users start publicsale 
+    // Users start publicsale 
     function publicSaleDeposit(bool buyInsurance, uint256 buyQuota, uint256 extraDeposit) external override {
+        require(buyQuota > minBuyQuota, "invalid buyQuota");
         require(block.timestamp >= publicSaleDepositStartTime, "not start");
         require(block.timestamp <= publicSaleDepositEndTime, "end");
         require(!publicSaleDeposited[msg.sender], "already public sale deposited");
@@ -364,6 +369,7 @@ contract IdoPool is IIdoPool, Initializable {
         _unlockedFromInsurance = true;
         emit CallbackFromInsurance(transferAmount);
     }
+
 
    // Withdraw fundraising tokens can only be call by the fundraiser address.
     function withdrawRaisingToken() external override {
