@@ -121,17 +121,19 @@ contract IdoPool is IIdoPool, Initializable {
         totalLeftQuotas = totalSupply_;
     }
 
-// Add whitelist for presale. Can be called multiple times. If duplicate users are found, the latest one will overwrite the previous ones.
-// quota needs to extend the precision of the sold tokens, for example, if the precision of the sold tokens is 18 and the allocated quota is 200, then quota = 200 * 10^18
+    // Add whitelist for presale. Can be called multiple times. 
+    // If duplicate users are found, the latest one will overwrite the previous ones.
+    // quota needs to extend the precision of the sold tokens, 
+    // for example, if the precision of the sold tokens is 18 and the allocated quota is 200, then quota = 200 * 10^18
     function addPresaleWhitelist(address[] memory users, uint256[] memory quotas) external override onlyKeeper {
-        require(presaleAndEnrollStartTime > block.timestamp, "over presale start time");
+        require(block.timestamp < presaleAndEnrollStartTime, "over presale start time");
         require(users.length == quotas.length, "length not the same");
 
         uint256 totalLeftQuotas_ = totalLeftQuotas;
         uint256 tempQuota_;
         for (uint256 i = 0; i < users.length; i++) {
             tempQuota_ = getPresaleQuota[users[i]];
-            // 之前已分配的额度需回收
+            
             if (tempQuota_ > 0) totalLeftQuotas_ += tempQuota_;
 
             getPresaleQuota[users[i]] = quotas[i];
@@ -143,7 +145,8 @@ contract IdoPool is IIdoPool, Initializable {
 
     // Add whitelist for public sale.
     function addPublicSaleList(address[] memory users, uint256[] memory quotas) external override onlyKeeper {
-        require(presaleAndEnrollEndTime < block.timestamp, "need after presale end");
+        require(block.timestamp > presaleAndEnrollEndTime, "need after presale");
+        require(block.timestamp < publicSaleDepositStartTime,"need before public sale");
         require(users.length == quotas.length, "length not the same");
 
         uint256 totalQuotas_;
@@ -173,7 +176,7 @@ contract IdoPool is IIdoPool, Initializable {
 
     // Users start presale 
     function presaleDeposit(uint256 buyQuota, bool buyInsurance) external override {
-        require(buyQuota > minBuyQuota, "invalid buyQuota");
+        require(buyQuota > minBuyQuota, "must greater than min buyquota");
         require(block.timestamp >= presaleAndEnrollStartTime, "not start");
         require(block.timestamp <= presaleAndEnrollEndTime, "end");
         require(!presaleDeposited[msg.sender], "already presale deposited");
@@ -203,7 +206,7 @@ contract IdoPool is IIdoPool, Initializable {
 
     // Users start publicsale 
     function publicSaleDeposit(bool buyInsurance, uint256 buyQuota, uint256 extraDeposit) external override {
-        require(buyQuota > minBuyQuota, "invalid buyQuota");
+        require(buyQuota > minBuyQuota, "must greater than min buyquota");
         require(block.timestamp >= publicSaleDepositStartTime, "not start");
         require(block.timestamp <= publicSaleDepositEndTime, "end");
         require(!publicSaleDeposited[msg.sender], "already public sale deposited");
@@ -260,11 +263,15 @@ contract IdoPool is IIdoPool, Initializable {
                 uint256 totalLeftValue = totalLeftAfterPublicSale.mulDiv(publicSalePrice, _sellingTokenExp);
                 uint256 extraQuota; // Additional quota available for purchase
                 if (totalLeftValue <= totalExtraDeposit) {
-                   // If the remaining total value is less than or equal to the total amount of extra deposit, then all the remaining quota will be allocated to all users who made extra deposit.
-                   // Each user will receive a portion of the remaining quota based on the ratio of their extra deposit amount to the total extra deposit amount.
+                   // If the remaining total value is less than or equal to the total amount of extra deposit, 
+                   // then all the remaining quota will be allocated to all users who made extra deposit.
+                   // Each user will receive a portion of the remaining quota based on the ratio of their extra deposit amount 
+                   // to the total extra deposit amount.
                     extraQuota = totalLeftAfterPublicSale.mulDiv(userIDO.refundable, totalExtraDeposit);
                 } else {
-                    // If the remaining total value is greater than the total amount of extra deposit, then all users who made extra deposit will be eligible to receive additional subscription tokens.
+                    // If the remaining total value is greater than the total amount of extra deposit, 
+                    // then all users who made extra deposit will be eligible to receive additional subscription tokens.
+
                     // extraQuota = extra deposit amount / public price
                     extraQuota = userIDO.refundable.mulDiv(_sellingTokenExp, publicSalePrice);
                 }
@@ -362,11 +369,17 @@ contract IdoPool is IIdoPool, Initializable {
         return claimableAmount;
     }
 
-    // Callback from the insurance pool contract, when the pool's funds are not sufficient to pay out, the lacking funds are transferred from another pool to the current pool.
+    // Callback from the insurance pool contract, when the pool's funds are not sufficient to pay out, 
+    // the lacking funds are transferred from current pool to insurance pool.
     function callbackFromInsurance(uint256 transferAmount) external override {
+        require(!_unlockedFromInsurance,"already callback by insurance");
         require(msg.sender == insurancePool, "forbidden");
         require(transferAmount <= totalLockByInsurance, "too much transferAmount");
-        TransferHelper.safeTransfer(raisingToken, insurancePool, transferAmount);
+
+        if (transferAmount >0) {
+            TransferHelper.safeTransfer(raisingToken, insurancePool, transferAmount);
+        }
+
         _unlockedFromInsurance = true;
         deductedByInsurance += transferAmount;
         emit CallbackFromInsurance(transferAmount);
