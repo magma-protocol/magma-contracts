@@ -4,30 +4,25 @@ const utils = require("../common/utils");
 async function main() {
   let contractAddresses = utils.getContractAddresses();
 
-  // const potisionManager = "0x521c76bF1F44f85eF5dbC17d5B70B7Be48Dd2f05";
+  const potisionManager = "0x63E6d23173d05d26Ce0803423a45EBE0442b63f7";
   const WMNT = "0xEa12Be2389c2254bAaD383c6eD1fa1e15202b52A";
-  // let scoreCalculatorAddress = "";
 
+  const ScoreCalculator = await ethers.getContractFactory("ScoreCalculator");
+  const scoreCalculator = await upgrades.deployProxy(ScoreCalculator, [
+    potisionManager,
+  ]);
+  console.log("ScoreCalculator deployed to:", scoreCalculator.address);
 
-  // const ScoreCalculator = await ethers.getContractFactory("ScoreCalculator");
-  // const scoreCalculator = await upgrades.deployProxy(ScoreCalculator, [
-  //   potisionManager,
-  // ]);
-  // console.log("ScoreCalculator deployed to:", scoreCalculator.address);
-  // scoreCalculatorAddress = scoreCalculator.address;
+  const scoreCalculatorAddresses = {
+    Proxy: scoreCalculator.address,
+    Admin: await upgrades.erc1967.getAdminAddress(scoreCalculator.address),
+    Implementation: await upgrades.erc1967.getImplementationAddress(
+      scoreCalculator.address
+    ),
+  };
+   console.log("ScoreCalculator Addresses:", scoreCalculatorAddresses);
 
-  // const scoreCalculatorAddresses = {
-  //    Proxy: scoreCalculator.address,
-  //    Admin: await upgrades.erc1967.getAdminAddress(
-  //      contractAddresses.ScoreCalculator.Proxy
-  //    ),
-  //    Implementation: await upgrades.erc1967.getImplementationAddress(
-  //      scoreCalculator.Proxy
-  //    ),
-  //  };
-  //  console.log("ScoreCalculator Addresses:", scoreCalculatorAddresses);
-
-  // upgrade scoreCalculator
+  // // upgrade scoreCalculator
   // const ScoreCalculator = await ethers.getContractFactory("ScoreCalculator");
   // let upgrade = await upgrades.upgradeProxy(
   //   contractAddresses.ScoreCalculator.Proxy,
@@ -63,36 +58,36 @@ async function main() {
   const StakingPool = await ethers.getContractFactory("StakingPool");
   const stakingPool = await StakingPool.deploy(
     WMNT,
-    contractAddresses.ScoreCalculator.Proxy,
+    scoreCalculator.address,
     lockPeriod,
     tierScores
   );
   console.log("StakingPool", stakingPool.address);
 
-  // const IdoPool = await ethers.getContractFactory("IdoPool");
-  // const idoPoolTemplate = await IdoPool.deploy();
-  // console.log("idoPoolTemplate", idoPoolTemplate.address);
+  const IdoPool = await ethers.getContractFactory("IdoPool");
+  const idoPoolTemplate = await IdoPool.deploy();
+  console.log("idoPoolTemplate", idoPoolTemplate.address);
 
-  // const IdoPoolFactory = await ethers.getContractFactory("IdoPoolFactory");
-  // const idoPoolFactory = await IdoPoolFactory.deploy(idoPoolTemplate.address);
-  // console.log("IdoPoolFactory", idoPoolFactory.address);
+  const IdoPoolFactory = await ethers.getContractFactory("IdoPoolFactory");
+  const idoPoolFactory = await IdoPoolFactory.deploy(idoPoolTemplate.address);
+  console.log("IdoPoolFactory", idoPoolFactory.address);
 
-  // const InsurancePool = await ethers.getContractFactory("InsurancePool");
-  // const insurancePool = await InsurancePool.deploy(idoPoolFactory.address);
-  // console.log("InsurancePool", insurancePool.address);
+  const InsurancePool = await ethers.getContractFactory("InsurancePool");
+  const insurancePool = await InsurancePool.deploy(idoPoolFactory.address);
+  console.log("InsurancePool", insurancePool.address);
 
-  // await idoPoolFactory.setInsurancePool(insurancePool.address, 15);
-  // console.log("Set InsurancePool Success");
+  await idoPoolFactory.setInsurancePool(insurancePool.address, 15);
+  console.log("Set InsurancePool Success");
 
-  // // write deployed contract address to file
-  // contractAddresses = {
-  //   ScoreCalculator: scoreCalculatorAddresses,
-  //   StakingPool: stakingPool.address,
-  //   IdoPoolTemplate: idoPoolTemplate.address,
-  //   IdoPoolFactory: idoPoolFactory.address,
-  //   InsurancePool: insurancePool.address,
-  // };
-  // await utils.writeContractAddresses(contractAddresses);
+  // write deployed contract address to file
+  contractAddresses = {
+    ScoreCalculator: scoreCalculatorAddresses,
+    StakingPool: stakingPool.address,
+    IdoPoolTemplate: idoPoolTemplate.address,
+    IdoPoolFactory: idoPoolFactory.address,
+    InsurancePool: insurancePool.address,
+  };
+  await utils.writeContractAddresses(contractAddresses);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

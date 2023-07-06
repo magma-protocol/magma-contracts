@@ -48,7 +48,8 @@ contract ScoreCalculator is IScoreCalculator, Initializable {
         return _poolSupported[pool];
     }
 
-    // price 是 token-USD 的价格，需扩展精度为 8 位，如实际价格为 0.2，则 price = 0.2 * 10^8 = 20000000
+   // price is the price of token-USD, and the precision needs to be expanded to 8 digits. 
+   // If the actual price is 0.2, then price = 0.2 * 10^8 = 20000000
     function setTokenPrice(address token, uint256 price) external onlyOwner {
         require(token != address(0), "zero address");
         require(price > 0, "zero price");
