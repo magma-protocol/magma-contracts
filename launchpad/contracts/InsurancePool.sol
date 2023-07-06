@@ -54,7 +54,7 @@ contract InsurancePool is IInsurancePool {
         emit IdoPoolRegistered(idoPool);
     }
 
-    function insure(address user, uint256 buyQuota, uint256 price) external override returns (uint256 insuranceId) {
+    function insure(address user, uint256 buyQuota, uint256 price, bool isPresale) external override returns (uint256 insuranceId) {
         require(isRegisteredPool[msg.sender], "forbidden");
         insuranceId = _insuranceDetails.length;
         InsuranceDetail memory detail = InsuranceDetail({
@@ -69,9 +69,9 @@ contract InsurancePool is IInsurancePool {
         _getInsuranceIdsByUser[user].push(insuranceId);
 
         IdoPoolInfo memory poolInfo = _idoPoolInfos[msg.sender];
-        if (price == poolInfo.presalePrice) {
+        if (isPresale) {
             poolInfo.presaleTotalQuota += buyQuota;
-        } else if (price == poolInfo.publicSalePrice) {
+        }else {
             poolInfo.publicSaleTotalQuota += buyQuota;
         }
         _idoPoolInfos[msg.sender] = poolInfo;

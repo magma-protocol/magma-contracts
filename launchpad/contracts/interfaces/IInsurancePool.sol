@@ -48,7 +48,7 @@ interface IInsurancePool {
     function totalNeedToPayByToken(address token) external view returns (uint256);
 
     function registerIdoPool(address idoPool) external;
-    function insure(address user, uint256 buyQuota, uint256 price) external returns (uint256 insuranceId);
+    function insure(address user, uint256 buyQuota, uint256 price, bool isPresale) external returns (uint256 insuranceId);
     function setAvgPrice(address pool, uint256 price) external;
     function claimLoss(uint256 insuranceId) external;
 }

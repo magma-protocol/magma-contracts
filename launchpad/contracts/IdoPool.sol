@@ -201,7 +201,7 @@ contract IdoPool is IIdoPool, Initializable {
         if (buyInsurance && insuranceFeeRate > 0) {
             uint256 insuranceFee = payForQuota * insuranceFeeRate / 100;
             TransferHelper.safeTransferFrom(raisingToken, msg.sender, insurancePool, insuranceFee);
-            uint256 insuranceId = IInsurancePool(insurancePool).insure(msg.sender, buyQuota, presalePrice);
+            uint256 insuranceId = IInsurancePool(insurancePool).insure(msg.sender, buyQuota, presalePrice, true);
             userIDO.insuranceIds.push(insuranceId);
             totalLockByInsurance += payForQuota; // add to the total locked amount by insurance.
         }
@@ -239,7 +239,7 @@ contract IdoPool is IIdoPool, Initializable {
         if (buyInsurance && insuranceFeeRate > 0) {
             uint256 insuranceFee = payForQuota * insuranceFeeRate / 100;
             TransferHelper.safeTransferFrom(raisingToken, msg.sender, insurancePool, insuranceFee);
-            uint256 insuranceId = IInsurancePool(insurancePool).insure(msg.sender, buyQuota, publicSalePrice);
+            uint256 insuranceId = IInsurancePool(insurancePool).insure(msg.sender, buyQuota, publicSalePrice, false);
             userIDO.insuranceIds.push(insuranceId);
             totalLockByInsurance += payForQuota; // add to the total locked amount by insurance.
         }
