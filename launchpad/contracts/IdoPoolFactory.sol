@@ -99,7 +99,8 @@ contract IdoPoolFactory is IIdoPoolFactory, Ownable {
             "wrong public sale start deposit time");
         require(parameters.tgeUnlockRatio <= 100, "tgeUnlockRatio over 100");
 
-        pool = Clones.clone(idoPoolTemplate);
+        bytes32 salt = keccak256(abi.encodePacked(blockhash(block.number), block.timestamp));
+        pool = Clones.cloneDeterministic(idoPoolTemplate,salt);
         IIdoPool(pool).initialize(
             address(this), 
             insurancePool, 
