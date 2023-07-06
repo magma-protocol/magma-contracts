@@ -32,6 +32,7 @@ interface IIdoPool {
     function totalLeftQuotas() external view returns (uint256); // Returns the total remaining quota available for distribution.
     function totalBuyedByUsers() external view returns (uint256); // Returns the total amount of tokens purchased by users.
     function totalLockByInsurance() external view returns (uint256); // Returns the total amount locked due to purchasing insurance.
+    function deductedByInsurance() external view returns (uint256); // Return to deducted amount by insurance.
     function totalExtraDeposit() external view returns (uint256); // Returns the total extra deposit.
     function totalRaised() external view returns (uint256); // Returns the total amount raised.
 

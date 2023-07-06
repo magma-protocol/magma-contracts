@@ -27,6 +27,7 @@ contract IdoPool is IIdoPool, Initializable {
     uint256 public override totalLeftQuotas; // the total remaining quota available for distribution.
     uint256 public override totalBuyedByUsers; // the total amount of tokens purchased by users.
     uint256 public override totalLockByInsurance; // the total amount locked due to purchasing insurance.
+    uint256 public override deductedByInsurance; // the deducted amount locked due to purchasing insurance.
     uint256 public override totalExtraDeposit; // the total extra deposit.
     uint256 public override totalRaised; // the total amount raised.
     uint256 public override presalePrice; // The presale price has the same decimals as the fundraising token.
@@ -367,6 +368,7 @@ contract IdoPool is IIdoPool, Initializable {
         require(transferAmount <= totalLockByInsurance, "too much transferAmount");
         TransferHelper.safeTransfer(raisingToken, insurancePool, transferAmount);
         _unlockedFromInsurance = true;
+        deductedByInsurance += transferAmount;
         emit CallbackFromInsurance(transferAmount);
     }
 
@@ -380,7 +382,11 @@ contract IdoPool is IIdoPool, Initializable {
 
         uint256 withdrawable = totalRaised;
         // After receiving the callback from the insurance pool, only the locked portion of the insurance can be withdrawn.
-        if (!_unlockedFromInsurance) withdrawable -= totalLockByInsurance;
+        if (!_unlockedFromInsurance) {
+            withdrawable -= totalLockByInsurance;
+        } else {
+            withdrawable -= deductedByInsurance;
+        }
         
         withdrawable -= _withdrawnByfundraiser; // The withdrawn portion needs to be subtracted from the total locked amount.
         require(withdrawable > 0, "zero withdrawable");
