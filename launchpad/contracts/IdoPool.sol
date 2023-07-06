@@ -111,11 +111,18 @@ contract IdoPool is IIdoPool, Initializable {
         totalSupply = totalSupply_;
         presalePrice = presalePrice_;
         publicSalePrice = publicSalePrice_;
+
         presaleAndEnrollStartTime = presaleAndEnrollStartTime_;
         presaleAndEnrollEndTime = presaleAndEnrollStartTime_ + presaleAndEnrollPeriod_;
+        require(presaleAndEnrollEndTime > presaleAndEnrollStartTime,"invalid presale time");
+
         publicSaleDepositStartTime = publicSaleDepositStartTime_;
         publicSaleDepositEndTime = publicSaleDepositStartTime_ + publicSaleDepositPeriod_;
+        require(publicSaleDepositEndTime > publicSaleDepositStartTime,"invalid public sale time");
+
         claimStartTime = claimStartTime_;
+        require(claimStartTime > publicSaleDepositEndTime,"invalid claim time");
+
         unlockTillTime = claimStartTime_ + lockPeriod_;
         tgeUnlockRatio = tgeUnlockRatio_;
         totalLeftQuotas = totalSupply_;
@@ -246,7 +253,6 @@ contract IdoPool is IIdoPool, Initializable {
     function updateTotalValue() external onlyKeeper {
         _updateLastTotalValues();
     }
-
 
     // When a user redeems their investment, calculate the extra deposit proceeds
     function claim() external override {
