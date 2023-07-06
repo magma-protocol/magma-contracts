@@ -81,8 +81,10 @@ contract InsurancePool is IInsurancePool {
 
     // The average price update by the keeper should have the same unit and precision as the prices for private sales and public sales.
     function setAvgPrice(address pool, uint256 avgPrice) external override {
+        require(avgPrice > 0,"invlalid avg price");
         require(msg.sender == IIdoPoolFactory(factory).keeper(), "forbidden");
         require(isRegisteredPool[pool], "unregistered");
+
         IdoPoolInfo memory poolInfo = _idoPoolInfos[pool];
         require(poolInfo.avgPrice == 0, "pool avg price already set");
         poolInfo.avgPrice = avgPrice;
