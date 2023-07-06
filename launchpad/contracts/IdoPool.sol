@@ -27,7 +27,7 @@ contract IdoPool is IIdoPool, Initializable {
     uint256 public override totalLeftQuotas; // the total remaining quota available for distribution.
     uint256 public override totalBuyedByUsers; // the total amount of tokens purchased by users.
     uint256 public override totalLockByInsurance; // the total amount locked due to purchasing insurance.
-    uint256 public override deductedByInsurance; // the deducted amount locked due to purchasing insurance.
+    uint256 public override deductedByInsurance; // the deducted amount callback by insurance.
     uint256 public override totalExtraDeposit; // the total extra deposit.
     uint256 public override totalRaised; // the total amount raised.
     uint256 public override presalePrice; // The presale price has the same decimals as the fundraising token.
