@@ -103,7 +103,7 @@ async function main() {
     presaleAndEnrollPeriod: BigNumber.from(7200), // 2个小时
     publicSaleDepositStartTime: BigNumber.from(now + 7200 + 1), // 公售开始时间
     publicSaleDepositPeriod: BigNumber.from(3600 * 24), // 公售持续1天
-    claimStartTime: BigNumber.from(now + 7200 + 3600 * 24 + 1), // claim开始时间
+    claimStartTime: BigNumber.from(now + 7200 + 3600 * 24 + 100), // claim开始时间
     lockPeriod: BigNumber.from(3600 * 24 * 7), // 锁定7天
     tgeUnlockRatio: 50, // 初始解锁比例 50%
   });

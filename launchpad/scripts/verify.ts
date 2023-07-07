@@ -29,7 +29,6 @@ async function main() {
         tierScores,
       ],
     });
-    return
 
     await hre.run("verify:verify", {
       address: contractAddresses.IdoPoolTemplate,

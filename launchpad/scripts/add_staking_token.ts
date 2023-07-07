@@ -34,15 +34,13 @@ async function main() {
     console.log("setMagmaTokenTx :", setMagmaTokenTx.hash);
   }
 
-
   // add LP
-  let mamaMntFee100Lp = scoreCalculator.isPoolSupported(mamaAddress, wMNT,100);
+  let mamaMntFee100Lp = await scoreCalculator.isPoolSupported(mamaAddress, wMNT,100);
+  console.log("scoreCalculator  isPoolSupported:", mamaMntFee100Lp);
   if (!mamaMntFee100Lp){
     let addMamaMntFee100LpTx = await scoreCalculator.supportPool(mamaAddress,wMNT,100);
     console.log("addMamaMntFee100LpTx:", addMamaMntFee100LpTx.hash);
   }
-
-  
 }
 
 // We recommend this pattern to be able to use async/await everywhere
