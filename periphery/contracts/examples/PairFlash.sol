@@ -50,7 +50,7 @@ contract PairFlash is IMagmaFlashCallback, PeripheryPayments {
         bytes calldata data
     ) external override {
         FlashCallbackData memory decoded = abi.decode(data, (FlashCallbackData));
-        CallbackValidation.verifyCallback(factory, decoded.poolKey);
+        CallbackValidation.verifyCallback(deployer, decoded.poolKey);
 
         address token0 = decoded.poolKey.token0;
         address token1 = decoded.poolKey.token1;
@@ -125,7 +125,7 @@ contract PairFlash is IMagmaFlashCallback, PeripheryPayments {
     function initFlash(FlashParams memory params) external {
         PoolAddress.PoolKey memory poolKey =
             PoolAddress.PoolKey({token0: params.token0, token1: params.token1, fee: params.fee1});
-        IMagmaPool pool = IMagmaPool(PoolAddress.computeAddress(factory, poolKey));
+        IMagmaPool pool = IMagmaPool(PoolAddress.computeAddress(deployer, poolKey));
         // recipient of borrowed amounts
         // amount of token0 requested to borrow
         // amount of token1 requested to borrow
