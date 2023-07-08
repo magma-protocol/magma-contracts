@@ -34,7 +34,7 @@ contract QuoterV2 is IQuoterV2, IMagmaSwapCallback, PeripheryImmutableState {
         address tokenB,
         uint24 fee
     ) private view returns (IMagmaPool) {
-        return IMagmaPool(PoolAddress.computeAddress(factory, PoolAddress.getPoolKey(tokenA, tokenB, fee)));
+        return IMagmaPool(PoolAddress.computeAddress(deployer, PoolAddress.getPoolKey(tokenA, tokenB, fee)));
     }
 
     /// @inheritdoc IMagmaSwapCallback
@@ -45,7 +45,7 @@ contract QuoterV2 is IQuoterV2, IMagmaSwapCallback, PeripheryImmutableState {
     ) external view override {
         require(amount0Delta > 0 || amount1Delta > 0); // swaps entirely within 0-liquidity regions are not supported
         (address tokenIn, address tokenOut, uint24 fee) = path.decodeFirstPool();
-        CallbackValidation.verifyCallback(factory, tokenIn, tokenOut, fee);
+        CallbackValidation.verifyCallback(deployer, tokenIn, tokenOut, fee);
 
         (bool isExactInput, uint256 amountToPay, uint256 amountReceived) =
             amount0Delta > 0

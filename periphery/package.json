@@ -26,7 +26,8 @@
     "deploy": "hardhat run --network mantleTestnet scripts/deploy.ts",
     "init_pool": "hardhat run --network mantleTestnet scripts/init_pool.ts",
     "mint": "hardhat run --network mantleTestnet scripts/mint.ts",
-    "verify": "hardhat run --network mantleTestnet scripts/verify.ts"
+    "verify": "hardhat run --network mantleTestnet scripts/verify.ts",
+    "quote": "hardhat run --network mantleTestnet scripts/quoteV2.ts"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^2.0.2",
