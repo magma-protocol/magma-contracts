@@ -1,15 +1,20 @@
 import { ethers, upgrades } from "hardhat";
 const utils = require("../common/utils");
+import dotenv from "dotenv";
+dotenv.config();
 
 async function main() {
-  let contractAddresses = utils.getContractAddresses("");
+  let peripheryContractAddresses = utils.getContractAddresses(
+    `../periphery/deployments/${process.env.NETWORK}.json`
+  );
+  console.log("periphery contract addresses:", peripheryContractAddresses);
 
-  const potisionManager = "0x63E6d23173d05d26Ce0803423a45EBE0442b63f7";
-  const WMNT = "0xEa12Be2389c2254bAaD383c6eD1fa1e15202b52A";
+  let WMNT = process.env.WMNT !== undefined ? process.env.WMNT : "";
+  console.log("WMNT addresses:", WMNT);
 
   const ScoreCalculator = await ethers.getContractFactory("ScoreCalculator");
   const scoreCalculator = await upgrades.deployProxy(ScoreCalculator, [
-    potisionManager,
+    peripheryContractAddresses.NonfungiblePositionManager,
   ]);
   console.log("ScoreCalculator deployed to:", scoreCalculator.address);
 
@@ -80,7 +85,7 @@ async function main() {
   console.log("Set InsurancePool Success");
 
   // write deployed contract address to file
-  contractAddresses = {
+  let contractAddresses = {
     ScoreCalculator: scoreCalculatorAddresses,
     StakingPool: stakingPool.address,
     IdoPoolTemplate: idoPoolTemplate.address,

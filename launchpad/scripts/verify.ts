@@ -1,14 +1,17 @@
 const hre = require("hardhat");
 const utils = require("../common/utils");
-
-const mamaAddress = "0x74a0E7118480bdfF5f812c7a879a41db09ac2c39";
-const positionManagerAddress = "0x521c76bF1F44f85eF5dbC17d5B70B7Be48Dd2f05";
-const WMNT = "0xEa12Be2389c2254bAaD383c6eD1fa1e15202b52A";
-const masterChefAddress = "0xFF79ddBB87ae69bA8Bd09579081719d06EbAa58B";
+import dotenv from "dotenv";
+dotenv.config();
 
 async function main() {
-    let contractAddresses = utils.getContractAddresses("");
-    console.log(contractAddresses);
+  let peripheryContractAddresses = utils.getContractAddresses(`../periphery/deployments/${process.env.NETWORK}.json`);
+  console.log("periphery contract addresses:", peripheryContractAddresses);
+
+  let WMNT = process.env.WMNT !== undefined ? process.env.WMNT : "";
+  console.log("WMNT addresses:", WMNT);
+
+  let contractAddresses = utils.getContractAddresses("");
+  console.log(contractAddresses);
 
    const lockPeriod = 600;
    const tierScores = [

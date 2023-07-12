@@ -1,24 +1,35 @@
 const hre = require("hardhat");
 const utils = require("../common/utils");
 
-const mamaAddress = "0x74a0E7118480bdfF5f812c7a879a41db09ac2c39";
-const wMNT = "0xEa12Be2389c2254bAaD383c6eD1fa1e15202b52A";
-const positionManagerAddress = "0x63E6d23173d05d26Ce0803423a45EBE0442b63f7";
-
 async function main() {
+  let peripheryContractAddresses = utils.getContractAddresses(
+    `../periphery/deployments/${process.env.NETWORK}.json`
+  );
+  console.log("periphery contract addresses:", peripheryContractAddresses);
+
+  let WMNT = process.env.WMNT !== undefined ? process.env.WMNT : "";
+  console.log("WMNT addresses:", WMNT);
+
+  let MAMA = process.env.MAMA !== undefined ? process.env.MAMA : "";
+  console.log("MAMA addresses:", MAMA);
+
   let contractAddresses = utils.getContractAddresses("");
 
   await hre.run("verify:verify", {
     address: contractAddresses.MasterChef,
     contract: "contracts/MasterChef.sol:MasterChef",
-    constructorArguments: [mamaAddress, positionManagerAddress, wMNT],
+    constructorArguments: [
+      MAMA,
+      peripheryContractAddresses.NonfungiblePositionManager,
+      WMNT,
+    ],
   });
 
   await hre.run("verify:verify", {
     address: contractAddresses.MasterChefV3Receiver,
     contract:
       "contracts/receiver/MasterChefV3Receiver.sol:MasterChefV3Receiver",
-    constructorArguments: [contractAddresses.MasterChef, mamaAddress],
+    constructorArguments: [contractAddresses.MasterChef, MAMA],
   });
 }
 

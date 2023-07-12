@@ -1,15 +1,21 @@
 const hre = require("hardhat");
 const utils = require("../common/utils");
+import dotenv from "dotenv";
+dotenv.config();
 
-const masterChefAddress = "0xcBbD76a2F2926e161015b21596df37123c7f850C";
 
 async function main() {
   let contractAddresses = utils.getContractAddresses("");
 
+   let masterChefContractAddresses = utils.getContractAddresses(
+     `../masterChef/deployments/${process.env.NETWORK}.json`
+   );
+   console.log("masterChef contract addresses:", masterChefContractAddresses);
+
   await hre.run("verify:verify", {
     address: contractAddresses.MagmaLmPoolDeployer,
     contract: "contracts/MagmaLmPoolDeployer.sol:MagmaLmPoolDeployer",
-    constructorArguments: [masterChefAddress],
+    constructorArguments: [masterChefContractAddresses.MasterChef],
   });
 }
 

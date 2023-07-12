@@ -1,17 +1,24 @@
 import { ethers } from "hardhat";
 const utils = require("../common/utils");
-
-const mamaAddress = "0x74a0E7118480bdfF5f812c7a879a41db09ac2c39";
-const wMNT = "0xEa12Be2389c2254bAaD383c6eD1fa1e15202b52A";
-const positionManagerAddress = "0x63E6d23173d05d26Ce0803423a45EBE0442b63f7";
+import dotenv from "dotenv";
+dotenv.config();
 
 async function main() {
+  let peripheryContractAddresses = utils.getContractAddresses(`../periphery/deployments/${process.env.NETWORK}.json`);
+  console.log("periphery contract addresses:", peripheryContractAddresses);
+
+  let WMNT = process.env.WMNT !== undefined ? process.env.WMNT : "";
+  console.log("WMNT addresses:", WMNT);
+
+  let MAMA = process.env.MAMA !== undefined ? process.env.MAMA : "";
+  console.log("MAMA addresses:", MAMA);
+
   // deploy masterChef
   const MasterChef = await ethers.getContractFactory("MasterChef");
   const masterChef = await MasterChef.deploy(
-    mamaAddress,
-    positionManagerAddress,
-    wMNT
+    MAMA,
+    peripheryContractAddresses.NonfungiblePositionManager,
+    WMNT
   );
   console.log("masterChef deployed to:", masterChef.address);
 
@@ -19,7 +26,7 @@ async function main() {
   const MasterChefV3Receiver = await ethers.getContractFactory("MasterChefV3Receiver");
   const masterChefV3Receiver = await MasterChefV3Receiver.deploy(
     masterChef.address,
-    mamaAddress
+    MAMA
   );
   console.log("masterChefV3Receiver deployed to:", masterChefV3Receiver.address);
 
