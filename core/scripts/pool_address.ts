@@ -8,12 +8,20 @@ async function main() {
   let contractAddresses = utils.getContractAddresses();
   console.log("contractAddresses:", contractAddresses);
 
-  const MagmaFactory = await ethers.getContractAt(
-    "MagmaFactory",
-    contractAddresses.MagmaFactory
+  // const MagmaFactory = await ethers.getContractAt(
+  //   "MagmaFactory",
+  //   contractAddresses.MagmaFactory
+  // );
+  // let poolAddress = await MagmaFactory.getPool(mamaAddress,usdcAddress,500);
+  // console.log("getPool:", poolAddress);
+
+  const MagmaPool = await ethers.getContractAt(
+    "MagmaPool",
+    "0xabb213151ee053180348d9423f7f8daf24f46f02"
   );
-  let poolAddress = await MagmaFactory.getPool(mamaAddress,usdcAddress,500);
-  console.log("getPool:", poolAddress);
+
+  let slot0 = await MagmaPool.slot0();
+  console.log("slot0:", slot0);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
