@@ -29,10 +29,11 @@ const config: HardhatUserConfig = {
   networks: {
     mantleTestnet: {
       url: process.env.MANTLE_TESTNET_URL || "",
-      accounts: [owner, keeper],
+      accounts:
+        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
     mantleMainnet: {
-      url: process.env.BSC_MAINNET_URL || "",
+      url: process.env.MANTLE_URL || "",
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
@@ -50,6 +51,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: "https://explorer.testnet.mantle.xyz/api",
           browserURL: "https://rpc.testnet.mantle.xyz",
+        },
+      },
+      {
+        network: "mantleMainnet",
+        chainId: 5000,
+        urls: {
+          apiURL: "https://explorer.mantle.xyz/api",
+          browserURL: "https://explorer.mantle.xyz/",
         },
       },
     ],

@@ -16,7 +16,6 @@ contract NonfungibleTokenPositionDescriptorOffChain is INonfungibleTokenPosition
         _baseTokenURI = baseTokenURI;
     }
 
-    /// @inheritdoc INonfungibleTokenPositionDescriptor
     function tokenURI(INonfungiblePositionManager positionManager, uint256 tokenId)
         external
         view

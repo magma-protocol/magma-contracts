@@ -2,7 +2,7 @@ import { ethers } from "hardhat";
 const utils = require("../common/utils");
 
 async function main() {
-  let contractAddresses = utils.getContractAddresses();
+  let contractAddresses = utils.getContractAddresses("");
 
   const MasterChefV3Receiver = await ethers.getContractFactory("MasterChefV3Receiver");
   const masterChefRecevier = await MasterChefV3Receiver.attach(

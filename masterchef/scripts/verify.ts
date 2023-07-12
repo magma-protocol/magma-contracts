@@ -6,7 +6,7 @@ const wMNT = "0xEa12Be2389c2254bAaD383c6eD1fa1e15202b52A";
 const positionManagerAddress = "0x63E6d23173d05d26Ce0803423a45EBE0442b63f7";
 
 async function main() {
-  let contractAddresses = utils.getContractAddresses();
+  let contractAddresses = utils.getContractAddresses("");
 
   await hre.run("verify:verify", {
     address: contractAddresses.MasterChef,

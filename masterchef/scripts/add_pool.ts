@@ -4,7 +4,7 @@ const utils = require("../common/utils");
 const LpAddress = "0xAbb213151ee053180348d9423F7F8dAf24F46F02";
 
 async function main() {
-  let contractAddresses = utils.getContractAddresses();
+  let contractAddresses = utils.getContractAddresses("");
 
   const MasterChef = await ethers.getContractFactory("MasterChef");
   const masterChef = await MasterChef.attach(contractAddresses.MasterChef);

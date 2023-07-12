@@ -4,7 +4,7 @@ const utils = require("../common/utils");
 const lmPoolDeployer = "0x44FaccB643Adf92AE208425EFbC45EE0Fedc9c3D";
 
 async function main() {
-  let contractAddresses = utils.getContractAddresses();
+  let contractAddresses = utils.getContractAddresses("");
 
   const MasterChef = await ethers.getContractFactory("MasterChef");
   const masterChef = await MasterChef.attach(contractAddresses.MasterChef);

@@ -7,7 +7,7 @@ const wmntAddress = "0xEa12Be2389c2254bAaD383c6eD1fa1e15202b52A";
 
 async function main() {
   const [owner] = await ethers.getSigners();
-  let contractAddresses = utils.getContractAddresses();
+  let contractAddresses = utils.getContractAddresses("");
 
   const swapRouter = await ethers.getContractAt(
     "SwapRouter",

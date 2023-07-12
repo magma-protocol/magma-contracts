@@ -2,7 +2,7 @@ const hre = require("hardhat");
 const utils = require("../common/utils");
 
 async function main() {
-  let contractAddresses = utils.getContractAddresses();
+  let contractAddresses = utils.getContractAddresses("");
 
   await hre.run("verify:verify", {
     address: contractAddresses.MagmaPoolDeployer,
@@ -19,12 +19,6 @@ async function main() {
    await hre.run("verify:verify", {
      address: contractAddresses.InitCodeHashAddress,
      contract: "contracts/test/OutputCodeHash.sol:OutputCodeHash",
-     constructorArguments: [],
-   });
-
-   await hre.run("verify:verify", {
-     address: contractAddresses.WMNT,
-     contract: "contracts/WMNT.sol:WMNT",
      constructorArguments: [],
    });
 }

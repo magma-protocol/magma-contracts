@@ -4,7 +4,7 @@ const utils = require("../common/utils");
 const masterChefAddress = "0xcBbD76a2F2926e161015b21596df37123c7f850C";
 
 async function main() {
-  let contractAddresses = utils.getContractAddresses();
+  let contractAddresses = utils.getContractAddresses("");
 
   await hre.run("verify:verify", {
     address: contractAddresses.MagmaLmPoolDeployer,

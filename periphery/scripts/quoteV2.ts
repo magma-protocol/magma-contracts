@@ -13,7 +13,7 @@ enum FeeAmount {
 
 async function main() {
     const [owner] = await ethers.getSigners();
-    let contractAddresses = utils.getContractAddresses();
+    let contractAddresses = utils.getContractAddresses("");
     console.log("contractAddresses:", contractAddresses);
 
     const QuoterV2 = await ethers.getContractAt(

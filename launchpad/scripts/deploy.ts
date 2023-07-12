@@ -2,7 +2,7 @@ import { ethers, upgrades } from "hardhat";
 const utils = require("../common/utils");
 
 async function main() {
-  let contractAddresses = utils.getContractAddresses();
+  let contractAddresses = utils.getContractAddresses("");
 
   const potisionManager = "0x63E6d23173d05d26Ce0803423a45EBE0442b63f7";
   const WMNT = "0xEa12Be2389c2254bAaD383c6eD1fa1e15202b52A";

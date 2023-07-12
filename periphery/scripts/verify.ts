@@ -1,23 +1,28 @@
 const hre = require("hardhat");
 const utils = require("../common/utils");
-
-const magmaPoolDeployer = "0x13A16A5023387786a7c3b308AF17Eb4a5319Fad7";
-const magmaFactory = "0xd3A4204862955d1F422f533Eb581310DBaAfaf7e";
-const WMNT = "0xEa12Be2389c2254bAaD383c6eD1fa1e15202b52A";
+import dotenv from "dotenv";
+dotenv.config();
 
 async function main() {
-  let contractAddresses = utils.getContractAddresses();
+  let coreContractAddresses = utils.getContractAddresses(`../core/deployments/${process.env.NETWORK}.json`);
+  console.log("core contract addresses:", coreContractAddresses);
+
+  let WMNT = process.env.WMNT !== undefined ? process.env.WMNT : "";
+  console.log("WMNT addresses:", WMNT);
+
+  let contractAddresses = utils.getContractAddresses("");
+  console.log("periphery contract addresses:", coreContractAddresses);
 
   await hre.run("verify:verify", {
     address: contractAddresses.SwapRouter,
     contract: "contracts/SwapRouter.sol:SwapRouter",
-    constructorArguments: [magmaPoolDeployer, magmaFactory, WMNT],
+    constructorArguments: [coreContractAddresses.MagmaPoolDeployer, coreContractAddresses.MagmaFactory, WMNT],
   });
 
   await hre.run("verify:verify", {
     address: contractAddresses.QuoterV2,
     contract: "contracts/lens/QuoterV2.sol:QuoterV2",
-    constructorArguments: [magmaPoolDeployer, magmaFactory, WMNT],
+    constructorArguments: [coreContractAddresses.MagmaPoolDeployer, coreContractAddresses.MagmaFactory, WMNT],
   });
 
   await hre.run("verify:verify", {
@@ -26,18 +31,18 @@ async function main() {
     constructorArguments: [],
   });
 
-//    await hre.run("verify:verify", {
-//      address: contractAddresses.NFTDescriptor,
-//      contract:
-//        "contracts/NFTDescriptor.sol:NFTDescriptor",
-//      constructorArguments: [],
-//    });
+   await hre.run("verify:verify", {
+     address: contractAddresses.NFTDescriptor,
+     contract:
+       "contracts/NFTDescriptor.sol:NFTDescriptor",
+     constructorArguments: [],
+   });
 
     await hre.run("verify:verify", {
       address: contractAddresses.NonfungibleTokenPositionDescriptor,
       contract:
-        "contracts/NonfungibleTokenPositionDescriptor.sol:NonfungibleTokenPositionDescriptor",
-      constructorArguments: [WMNT, utils.asciiStringToBytes32("MNT")],
+        "contracts/NonfungibleTokenPositionDescriptorOffChain.sol:NonfungibleTokenPositionDescriptorOffChain",
+      constructorArguments: [process.env.TOKEN_URI],
     });
 
      await hre.run("verify:verify", {
@@ -45,19 +50,19 @@ async function main() {
        contract:
          "contracts/NonfungiblePositionManager.sol:NonfungiblePositionManager",
        constructorArguments: [
-         magmaPoolDeployer,
-         magmaFactory,
+         coreContractAddresses.MagmaPoolDeployer,
+         coreContractAddresses.MagmaFactory,
          WMNT,
          contractAddresses.NonfungibleTokenPositionDescriptor,
        ],
      });
 
-      await hre.run("verify:verify", {
-        address: contractAddresses.MagmaInterfaceMulticall,
-        contract:
-          "contracts/lens/MagmaInterfaceMulticall.sol:MagmaInterfaceMulticall",
-        constructorArguments: [],
-      });
+      // await hre.run("verify:verify", {
+      //   address: contractAddresses.MagmaInterfaceMulticall,
+      //   contract:
+      //     "contracts/lens/MagmaInterfaceMulticall.sol:MagmaInterfaceMulticall",
+      //   constructorArguments: [],
+      // });
 }
 
 // We recommend this pattern to be able to use async/await everywhere

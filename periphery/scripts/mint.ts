@@ -7,7 +7,7 @@ const usdcAddress = "0x82A2eb46a64e4908bBC403854bc8AA699bF058E9";
 
 async function main() {
   const [owner] = await ethers.getSigners();
-  let contractAddresses = utils.getContractAddresses();
+  let contractAddresses = utils.getContractAddresses("");
   console.log("contractAddresses:", contractAddresses);
 
   const MNT = await ethers.getContractAt("WMNT", wmntAddress);

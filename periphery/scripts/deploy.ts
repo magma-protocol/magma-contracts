@@ -1,36 +1,27 @@
-import { ethers } from "hardhat";
+import { ethers,upgrades } from "hardhat";
 const utils = require("../common/utils");
+import dotenv from "dotenv";
+dotenv.config();
 
 async function main() {
-  const magmaPoolDeployer = "0x13A16A5023387786a7c3b308AF17Eb4a5319Fad7";
-  const magmaFactory = "0xd3A4204862955d1F422f533Eb581310DBaAfaf7e";
+  let coreContractAddresses = utils.getContractAddresses(`../core/deployments/${process.env.NETWORK}.json`);
+  console.log("core contract addresses:", coreContractAddresses);
 
-  // const WMNT = await ethers.getContractFactory("WMNT");
-  // const wmnt = await WMNT.deploy();
-  // console.log("WMNT address:", wmnt.address);
+  let WMNT = process.env.WMNT !== undefined ? process.env.WMNT : "";
+  console.log("WMNT addresses:", WMNT);
 
-  // const SwapRouter = await ethers.getContractFactory("SwapRouter");
-  // const swapRouter = await SwapRouter.deploy(
-  //   magmaPoolDeployer,
-  //   magmaFactory,
-  //   wmnt.address
-  // );
-  // console.log("SwapRouter", swapRouter.address);
-
-  // const QuoterV2 = await ethers.getContractFactory("QuoterV2");
-  // const quoterV2 = await QuoterV2.deploy(magmaPoolDeployer, magmaFactory, wmnt.address);
-  // console.log("QuoterV2", quoterV2.address);
+  const SwapRouter = await ethers.getContractFactory("SwapRouter");
+  const swapRouter = await SwapRouter.deploy(
+    coreContractAddresses.MagmaPoolDeployer,
+    coreContractAddresses.MagmaFactory,
+    WMNT
+  );
+  console.log("SwapRouter", swapRouter.address);
 
   const QuoterV2 = await ethers.getContractFactory("QuoterV2");
-  const quoterV2 = await QuoterV2.deploy(
-    magmaPoolDeployer,
-    magmaFactory,
-    "0xea12be2389c2254baad383c6ed1fa1e15202b52a"
-  );
+  const quoterV2 = await QuoterV2.deploy(coreContractAddresses.MagmaPoolDeployer, coreContractAddresses.MagmaFactory, WMNT);
   console.log("QuoterV2", quoterV2.address);
-  return
 
-  ;
   const TickLens = await ethers.getContractFactory("TickLens");
   const tickLens = await TickLens.deploy();
   console.log("TickLens", tickLens.address);
@@ -40,16 +31,15 @@ async function main() {
   console.log("NFTDescriptor", nftDescriptor.address);
 
   const NonfungibleTokenPositionDescriptor = await ethers.getContractFactory(
-    "NonfungibleTokenPositionDescriptor",
-    { libraries: { NFTDescriptor: nftDescriptor.address } }
+    "NonfungibleTokenPositionDescriptorOffChain"
   );
-  const nonfungibleTokenPositionDescriptor =
-    await NonfungibleTokenPositionDescriptor.deploy(
-      wmnt.address,
-      utils.asciiStringToBytes32("MNT")
-    );
+  const nonfungibleTokenPositionDescriptor = await upgrades.deployProxy(
+    NonfungibleTokenPositionDescriptor,
+    [process.env.TOKEN_URI]
+  );
+  await nonfungibleTokenPositionDescriptor.deployed();
   console.log(
-    "NonfungibleTokenPositionDescriptor",
+    "NonfungibleTokenPositionDescriptor deployed at",
     nonfungibleTokenPositionDescriptor.address
   );
 
@@ -57,20 +47,21 @@ async function main() {
     "NonfungiblePositionManager"
   );
   const nonfungiblePositionManager = await NonfungiblePositionManager.deploy(
-    magmaPoolDeployer,
-    magmaFactory,
-    wmnt.address,
+    coreContractAddresses.MagmaPoolDeployer,
+    coreContractAddresses.MagmaFactory,
+    WMNT,
     nonfungibleTokenPositionDescriptor.address
   );
   console.log("NonfungiblePositionManager", nonfungiblePositionManager.address);
 
   let contractAddresses = {
-    WMNT: wmnt.address,
+    WMNT: WMNT,
     SwapRouter: swapRouter.address,
     QuoterV2: quoterV2.address,
     TickLens: tickLens.address,
-    // NFTDescriptor: nftDescriptor.address,
-    NonfungibleTokenPositionDescriptor: nonfungibleTokenPositionDescriptor.address,
+    NFTDescriptor: nftDescriptor.address,
+    NonfungibleTokenPositionDescriptor:
+    nonfungibleTokenPositionDescriptor.address,
     NonfungiblePositionManager: nonfungiblePositionManager.address,
   };
   await utils.writeContractAddresses(contractAddresses);

@@ -6,7 +6,7 @@ const raiseToken = "0x82A2eb46a64e4908bBC403854bc8AA699bF058E9";      // USDC
 const sellingToken = "0x74a0E7118480bdfF5f812c7a879a41db09ac2c39";      // MAMA
 
 async function main() {
-  let contractAddresses = utils.getContractAddresses();
+  let contractAddresses = utils.getContractAddresses("");
 
   const [owner, keeper] = await ethers.getSigners();
 

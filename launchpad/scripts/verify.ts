@@ -7,7 +7,7 @@ const WMNT = "0xEa12Be2389c2254bAaD383c6eD1fa1e15202b52A";
 const masterChefAddress = "0xFF79ddBB87ae69bA8Bd09579081719d06EbAa58B";
 
 async function main() {
-    let contractAddresses = utils.getContractAddresses();
+    let contractAddresses = utils.getContractAddresses("");
     console.log(contractAddresses);
 
    const lockPeriod = 600;

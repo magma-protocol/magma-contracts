@@ -5,7 +5,7 @@ import { BigNumber } from "@ethersproject/bignumber";
 const mamaAddress = "0x74a0E7118480bdfF5f812c7a879a41db09ac2c39";
 
 async function main() {
-  let contractAddresses = utils.getContractAddresses();
+  let contractAddresses = utils.getContractAddresses("");
 
   const [owner, keeper] = await ethers.getSigners();
 
