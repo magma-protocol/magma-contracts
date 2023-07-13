@@ -10,6 +10,10 @@ async function main() {
   let WMNT = process.env.WMNT !== undefined ? process.env.WMNT : "";
   console.log("WMNT addresses:", WMNT);
 
+  const Multicall = await ethers.getContractFactory("MagmaInterfaceMulticall");
+  const multicall = await Multicall.deploy();
+  console.log("Multicall", multicall.address);
+
   const SwapRouter = await ethers.getContractFactory("SwapRouter");
   const swapRouter = await SwapRouter.deploy(
     coreContractAddresses.MagmaPoolDeployer,
@@ -63,6 +67,7 @@ async function main() {
     NonfungibleTokenPositionDescriptor:
     nonfungibleTokenPositionDescriptor.address,
     NonfungiblePositionManager: nonfungiblePositionManager.address,
+    Multicall: multicall.address
   };
   await utils.writeContractAddresses(contractAddresses);
 }
