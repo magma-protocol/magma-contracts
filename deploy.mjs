@@ -17,6 +17,7 @@ const p = await fs.readJson(`./periphery/deployments/${network}.json`)
 const m = await fs.readJson(`./masterchef/deployments/${network}.json`)
 const l = await fs.readJson(`./lm-pool/deployments/${network}.json`)
 const la = await fs.readJson(`./launchpad/deployments/${network}.json`)
+const mu = await fs.readJson(`./multicall3/deployments/${network}.json`)
 
 const addresses = {
   ...c,
@@ -24,6 +25,7 @@ const addresses = {
   ...m,
   ...l,
   ...la,
+  ...mu,
 }
 
 console.log(chalk.blue('Writing to file...'))
