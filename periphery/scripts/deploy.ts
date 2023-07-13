@@ -65,9 +65,9 @@ async function main() {
     TickLens: tickLens.address,
     NFTDescriptor: nftDescriptor.address,
     NonfungibleTokenPositionDescriptor:
-    nonfungibleTokenPositionDescriptor.address,
+      nonfungibleTokenPositionDescriptor.address,
     NonfungiblePositionManager: nonfungiblePositionManager.address,
-    Multicall: multicall.address
+    MagmaInterfaceMulticall: multicall.address,
   };
   await utils.writeContractAddresses(contractAddresses);
 }
