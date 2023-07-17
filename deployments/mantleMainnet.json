@@ -10,5 +10,6 @@
   "NFTDescriptor": "0xdD4fE16d307f01F6CD49c0E0198F74e46d3B46Cb",
   "NonfungibleTokenPositionDescriptor": "0xcBdB79E090BB51Bfd44cc932428e2684a88CFb40",
   "NonfungiblePositionManager": "0x7928b198a33b4A1ac7D67a0Aaf8B9d7FF0926b1c",
-  "Multicall": "0x976C7CefEd9744Ab244f2F8de9B83ceABC3aF006"
+  "MagmaInterfaceMulticall": "0x976C7CefEd9744Ab244f2F8de9B83ceABC3aF006",
+  "Multicall3": "0x05f3105fc9FC531712b2570f1C6E11dD4bCf7B3c"
 }
